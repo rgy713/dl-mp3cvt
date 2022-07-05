@@ -1,0 +1,15 @@
+{% extends "dl_mp3cvt/layout.html" %}
+{% block title %}MP3変換サイト{% endblock %}
+{% block content %}
+    <div class="dy-container">
+        <div class="dy-contents">
+        {% if login != 1 %}
+            <div class="dy-nav">
+                 <a href="{% url 'logout' %}"><span>ログアウト</span></a>
+            </div>
+        {% endif %}
+            {% block sub_content %}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}

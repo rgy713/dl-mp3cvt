@@ -1,0 +1,51 @@
+{% extends "dl_mp3cvt/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}MP3変換サイトアカウントの登録{% endblock %}
+
+{% block content %}
+
+    <div id="form-area">
+
+        <h1>MP3変換サイト<br>アカウントの登録</h1>
+        {% if regist != 2 %}
+            <form action="{% url 'regist' %}" method="post" id="login-form">{% csrf_token %}
+                <input type="text" name="{{ form.username.html_name }}" placeholder="ユーザーID（メールアドレス）"
+                        {% if form.username.errors %} class="error-border form-border {% if not form.password2.errors %} error-border-bottom{% endif %}" {% endif %}
+                       value="{{ username }}">
+                <input type="password" name="{{ form.password1.html_name }}" placeholder="パスワード(半角英数字･記号,8文字以上)"
+                        {% if form.password2.errors %} class="error-border form-border" {% endif %} >
+                <input type="password" name="{{ form.password2.html_name }}" placeholder="パスワードの確認"
+                        {% if form.password2.errors %} class="error-border form-border error-border-bottom" {% endif %}>
+                <input type="submit" id="form-btn" value="登録">
+            </form>
+        {% else %}
+            <input type="text" name="{{ form.username.html_name }}" placeholder="ユーザーID（メールアドレス）">
+            <input type="password" name="{{ form.password1.html_name }}" placeholder="パスワード（半角英数字・記号、8文字以上）">
+            <input type="password" name="{{ form.password2.html_name }}" placeholder="パスワードの確認">
+            <input type="submit" id="form-btn" value="登録">
+        {% endif %}
+
+        {% if regist != 2 %}
+            {% if form.errors %}
+                <div id="msg-area">
+                    {% if form.username.errors %}
+                        <div class="error-text">ユーザーID（メールアドレス）: {{ form.username.errors }}</div>
+                    {% endif %}
+                    {% if form.password1.errors %}
+                        <div class="error-text">パスワード: {{ form.password1.errors }}</div>
+                    {% endif %}
+                    {% if form.password2.errors %}
+                        <div class="error-text">パスワードの確認: {{ form.password2.errors }}</div>
+                    {% endif %}
+
+                </div>
+            {% endif %}
+        {% else %}
+            <div id="msg-area">
+                <div class="error-text center">アカウント登録制限中</div>
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock %}

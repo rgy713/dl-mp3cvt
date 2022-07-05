@@ -1,0 +1,295 @@
+{% extends "dl_mp3cvt/base_site.html" %}
+{% load i18n static %}
+{% block title %}MP3変換サイトアカウント管理画面{% endblock %}
+{% block extrastyle %}{{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}"/>{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+
+
+
+    <div id="header">
+        <h1><a href="{{ app.app_url }}">アカウント管理者アカウントの管理画面</a></h1>
+        <input type="button" id="menu" class="menu" value="メニュー">
+    </div>
+
+    <div id="menu2" class="menu">メニュー</div>
+    <div id="menus_out"></div>
+    <div id="menus">
+        <div class="ctrl">
+            <a href="#import">インポート</a>
+            <a href="{% url 'down_account_info' %}">エクスポート</a>{% csrf_token %}
+            <a href="#settings">認証ON/OFF/制限</a>
+            <a href="{% url 'admin:logout' %}?next={% url 'accountAdminLogin' %}">ログアウト</a>
+        </div>
+    </div>
+     <div id="import">
+        <div class="window-inner">
+
+            <div class="modal">
+                <div class="caption">
+                    <span>インポート</span>
+                    <span class="exit">×</span>
+                </div>
+
+                <form method="post" action="{% url 'insert_account_info' %}" enctype="multipart/form-data">{% csrf_token %}
+                    <div class="ctrl">
+
+                        <p>CSVファイル</p>
+                        <input type="file" id="file" name="file">
+                    </div>
+
+                    <div class="button">
+                        <input type="reset" class="reset" value="キャンセル" onclick="location.href='#'">
+                        <input type="submit" class="disabled" value="インポート">
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="settings">
+        <div class="window-inner">
+
+            <div class="modal">
+                <div class="caption">
+                    <span>認証ON/OFF/制限</span>
+                    <span class="exit">×</span>
+                </div>
+
+                <form method="post" action="{% url 'account_change_access' %}">{% csrf_token %}
+                    <div class="ctrl">
+
+                        <p>ログイン画面</p>
+                        <table>
+                            {% for select in selects %}
+                            <tr>
+                                <th><input type="radio" name="login" id="login{{ select.i }}" class="radio"
+                                           value="{{ select.i }}" {% if login == select.i %} checked="checked"{% endif %}>
+                                </th>
+                                <td><label for="login{{ select.i }}">{{ select.v }}</label></td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+
+                        <p>アカウント登録画面</p>
+                        <table>
+                            {% for select in selects %}
+                            <tr>
+                                <th><input type="radio" name="regist" id="regist{{ select.i }}" class="radio"
+                                           value="{{ select.i }}" {% if regist == select.i %} checked="checked"{% endif %}>
+                                </th>
+                                <td><label for="regist{{ select.i }}">{{ select.v }}</label></td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+
+                    <div class="button">
+                        <input type="reset" class="reset" value="キャンセル" onclick="location.href='#'">
+                        <input type="submit" class="disabled" value="適用">
+                        <input type="hidden" name="mode" value="settings">
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="main">
+        <h2>アカウント管理者アカウントの追加</h2>
+        <form method="post" name="formAddUser" {% comment %}action="{% url 'adminsignup' %}"{% endcomment %}>
+            {% csrf_token %}
+            <div class="table-scroll">
+                <table class="input-table">
+                    <tr>
+                        <th class="left{% if form.errors.username %} error-border-bottom {% endif %}">ユーザーID</th>
+                        <th class="left{% if form.errors.password1 %} error-border-bottom {% endif %}">パスワード</th>
+                        <th>追加</th>
+                    </tr>
+                    <tr>
+                        <td id="td_username"><input type="text" name="username" class="input"></td>
+                        <td id="td_pass1"><input type="text" name="password1" class="input"></td>
+                        <input type="hidden" name="password2" class="input">
+                        <td class="button"><input type="button" id="addUser" value="追加する" onclick="AddUserButton()">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="msg-area">
+            </div>
+
+            <input type="hidden" name="mode" value="userAdd">
+        </form>
+
+        <h2>アカウント管理者アカウント検索</h2>
+        <div class="table-scroll">
+            <table id="list">
+                <tr>
+                    <th colspan="4" class="left">ユーザーID</th>
+                    <th>検索</th>
+                </tr>
+                <tr class="input-table">
+                    <td colspan="4"><input type="text" name="query" class="input"></td>
+                    <td class="button"><input type="button" value="検索" onclick="getUserList()"></td>
+                    <input type="hidden" name="page" value="1">
+                </tr>
+            </table>
+        </div>
+
+        <h2>アカウント管理者アカウント一覧</h2>
+        <div class="table-scroll">
+            <table id="list" class="view-user-list">
+            </table>
+        </div>
+        <div id="pagelist" class="pagi">
+        </div>
+    </div>
+
+    <script>
+        function AddUserButton() {
+//console.log($("form[name=formAddUser]")[0]);
+            $('input[name=password2]').val($('input[name=password1]').val());
+            var fd = new FormData($("form[name=formAddUser]")[0]);
+            $.ajax({
+                type: "POST",
+                url: '{% url 'accountadminsignup' %}',
+                processData: false,
+                contentType: false,
+                //data : $('#formAddUser').serialize(),
+                data: fd,
+                success: function (result) {
+                    $("#msg-area").empty();
+                    $('#td_username').removeAttr('class');
+                    $('#td_pass1').removeAttr('class');
+
+                    if (result.type == 'ok') {
+                        $('input[name=username]').val('');
+                        $('input[name=password1]').val('');
+                        $("#msg-area").append('<div class="msg-text">アカウントを追加しました。</div>');
+                        getUserList();
+                    }
+                    else {
+                        if (result.contents.username !== undefined) {
+                            $('#td_username').addClass("error-border table-border");
+                            $("#msg-area").append('<div class="error-text">' + result.contents.username + '</div>');
+                        }
+                        else if (result.contents.password2 !== undefined) {
+                            $('#td_pass1').addClass("error-border table-border");
+                            $("#msg-area").append('<div class="error-text">' + result.contents.password2 + '</div>');
+                        }
+                    }
+                    //console.log(result.contents);
+                }
+            });
+        }
+
+        function deleteUser(uid) {
+            var r = confirm("アカウントを削除します");
+            if (r === true) {
+                $.ajax({
+                    type: "POST",
+                    url: '{% url 'delete_account' %}',
+                    data: {
+                        'userid': uid
+                    },
+                    success: function (result) {
+                        if (result.type == 'ok') {
+                            getUserList();
+                        }
+                    }
+                });
+            }
+        }
+
+        function getUserList() {
+            $("#msg-area").empty();
+            $('#td_username').removeAttr('class');
+            $('#td_pass1').removeAttr('class');
+            $('input[name=username]').val("");
+            $('input[name=password1]').val("");
+            var query = $("input[name=query]").val();
+            var page = $("input[name=page]").val();
+            $.ajax({
+                type: "POST",
+                url: '{% url 'getaccountlist' %}',
+                data: {
+                    'query': query,
+                    'page': page
+                },
+                success: function (result) {
+                    var html = '<tr>' +
+                        '<th id="cell-1">No</th>' +
+                        '<th id="cell-2" class="left">ユーザーID</th>' +
+                        '<th id="cell-3" class="left">パスワード</th>' +
+                        '<th id="cell-4">登録日</th>' +
+                        '<th>削除</th>' +
+                        '</tr>';
+                    var users = result.users;
+                    var paginator = result.pagination;
+                    if (users.length == 0) {
+                        html += '<tr><td colspan="5" class="center">検索結果がありません。</td></tr>';
+                        $(".view-user-list").html(html);
+                    } else {
+                        for (var i in users) {
+                            var user = users[i];
+                            html += '<tr>' +
+                                '<td class="center">' + user.number + '</td>' +
+                                '<td>' + user.username + '</td>' +
+                                '<td>' + user.password + '</td>' +
+                                '<td class="center">' + user.first_name + '</td>' +
+                                '<td class="button">' +
+                                '<input type="button" value="削除する" onclick="deleteUser(' + user.id + ')">' +
+                                '</td>' +
+                                '</tr>'
+                        }
+                        $(".view-user-list").html(html);
+
+                        html = '<ul>';
+                        if (paginator.prev_pnumber > 0) {
+                            html += '<li ><a onClick="getPageInfo(' + (page - 1) + ')">&laquo;</a></li>';
+                        } else {
+                            html += '<li class="disabled"><span>&laquo;</span></li>';
+                        }
+
+                        for (var i = 1; i <= paginator.page_range; i++) {
+                            if (page == i)
+                                html += '<li class="cur">' + i + '</li>';
+                            else
+                                html += '<li ><a onClick="getPageInfo(' + i + ')">' + i + '</a></li>';
+                        }
+
+                        if (paginator.next_pnumber > 0) {
+                            var cur_p = parseInt(page) + 1;
+                            html += '<li><a onClick="getPageInfo(' + cur_p + ')">&raquo;</a></li>';
+                        } else {
+                            html += '<li class="disabled"><span>&raquo;</span></li>';
+                        }
+                        html += '</ul>';
+                        $("#pagelist").html(html);
+                    }
+
+                }
+            });
+        }
+        getUserList();
+        function getPageInfo(page_num) {
+            $("input[name=page]").val(page_num);
+            getUserList();
+        }
+        $('input[name=query]').keypress(function (e) {
+            if (e.keyCode == 13)
+                getUserList();
+        });
+
+    </script>
+
+{% endblock %}

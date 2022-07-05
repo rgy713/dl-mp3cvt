@@ -1,0 +1,20 @@
+{% load staticfiles %}<!DOCTYPE html>
+
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+<title>{% block title %}MP3変換サイト 管理サイト{% endblock %}</title>
+<link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "assets/css/style.css" %}{% endblock %}" />
+<script src="{% static "assets/js/jquery.min.js" %}"></script>
+<script src="{% static "assets/js/menus.js" %}"></script>
+{% load i18n static %}
+{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+</head>
+
+<body>
+
+{% block content %}
+
+{% endblock %}
+<script src="{% static 'assets/js/ajaxSend.js' %}"></script>
+</body>
+</html>

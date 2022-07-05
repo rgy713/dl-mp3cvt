@@ -1,0 +1,14 @@
+{% extends "dl_mp3cvt/layout.html" %}
+{% block content %}
+    <div class="dy-container-m">
+        <div class="dy-contents">
+            <div class="dy-nav">
+                <a href="{% url 'index' %}"><span>ホーム</span></a>&nbsp;/&nbsp;
+                <a href="{% url 'user_info' %}"><span>ユーザー情報</span></a>&nbsp;/&nbsp;
+                <a href="{% url 'logout' %}"><span>ログアウト</span></a>
+            </div>
+            {% block sub_content %}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}

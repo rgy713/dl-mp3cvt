@@ -1,0 +1,19 @@
+{% extends "dl_mp3cvt/base.html" %}
+{% load staticfiles %}
+{% block title %}MP3変換サイト{% endblock %}
+{% block sub_content %}
+
+    <div class="dy-row">
+        <div class="ajax-file-upload dy-col-blue">
+            <span id="upload_btn_txt">ファイルを選択</span>
+            <form id="id-convert" method="POST" enctype="multipart/form-data">{% csrf_token %}
+               <input name="file" required="" id="id_file" type="file" accept="audio/*,video/*">
+               <input name="isIos" id="dyid-isIos" type="hidden"  value="">
+            </form>
+        </div>
+        <span class="dy-row1 dy-loader"></span>
+        <span id="csrf_token" style="display: none;">{% csrf_token %}</span>
+    </div>
+    <script src="{% static 'assets/js/jquery.fileDownload.js' %}"></script>
+    <script src="{% static 'assets/js/mp3Converter.min.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "dl_mp3cvt/base_m.html" %}
+
+{% block sub_content %}
+    <div class="form-group">
+        <label class="dy-input-label" for="dy_username">ユーザー名:</label>
+        <input id="dy_username" class="form-control" maxlength="120" type="text" disabled value="{{ username }}"/>
+    </div>
+    <div class="form-group">
+        <label class="dy-input-label" for="dy_date">登録日:</label>
+        <input id="dy_date" class="form-control" maxlength="120" type="date" disabled value="{{ date }}"/>
+        {% comment %}<span class="dy-errer-msg"></span>
+        <button id="dyid_change_email" class="btn badge-primary" onclick="changeEmail()">メールアドレスの変更</button>
+        <script>
+            function changeEmail() {
+                var r = confirm("メールアドレスを変更しますか？");
+                if (r === true) {
+                    $.ajax({
+                        url: "{% url 'change_email' %}",
+                        type: 'POST',
+                        data: {
+                            'email': $("#dy_email").val()
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.type == "S_OK") {
+                                alert(data.content);
+                            }
+                            else if (data.type == "FAIL") {
+                                alert(data.content);
+                            }
+                        },
+                        error: function () {
+                            alert("URL解析エラー");
+                        }
+                    });
+                }
+            }
+        </script>{% endcomment %}
+    </div>
+    <a href="{% url 'change_password' %}">パスワードの変更</a>
+{% endblock %}

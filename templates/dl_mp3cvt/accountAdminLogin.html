@@ -1,0 +1,26 @@
+{% extends "dl_mp3cvt/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}MP3変換サイトアカウント管理画面{% endblock %}
+
+{% block content %}
+
+<div id="form-area">
+
+<h1>MP3変換サイト<br>アカウント管理画面</h1>
+
+
+    <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+        <input type="text" name="{{ form.username.html_name }}" placeholder="ユーザーID" {% if form.errors %} class="error-border form-border" {% endif %} >
+        <input type="password" name="{{ form.password.html_name }}" placeholder="パスワード" {% if form.errors %} class="error-border form-border error-border-bottom" {% endif %}>
+        <input type="submit" id="form-btn" value="ログイン">
+    </form>
+
+{% if form.errors %}
+    <div id="msg-area">
+		<div class="error-text center">ログイン情報が間違っています。</div>
+	</div>
+{% endif %}
+</div>
+
+{% endblock %}

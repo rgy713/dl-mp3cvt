@@ -1,0 +1,42 @@
+from django.conf.urls import url
+from . import views
+from django.contrib.auth import views as auth_views
+from django.conf import settings
+
+urlpatterns = [
+    url(r'^mp3_convert/$', views.index, name='index'),
+    url(r'^mp3_convert/convert/$', views.mp3_convert, name="mp3_converter"),
+    url(r'^mp3_convert/login/$', views.user_login, name='login',),
+    url(r'^mp3_convert/logout/$', auth_views.logout, name='logout', kwargs={'next_page': settings.LOGIN_URL, }),
+    url(r'^mp3_convert_user/userAdmin/$', views.user_admin, name='userAdmin'),
+    url(r'^mp3_convert_user/userAdmin/login/$', views.user_admin_login, name='userAdminLogin'),
+    url(r'^mp3_convert_user/accountAdmin/$', views.account_admin, name='accountAdmin'),
+    url(r'^mp3_convert_user/accountAdmin/login$', views.account_admin_login, name='accountAdminLogin'),
+    url(r'^mp3_convert_user/regist/$', views.signup, name='regist'),
+    url(r'^mp3_convert_user/adminsignup/$', views.adminsignup, name='adminsignup'),
+    url(r'^mp3_convert_user/delete_user/$', views.delete_user, name='delete_user'),
+    url(r'^mp3_convert_user/getuserlist/$', views.get_user_list, name='getuserlist'),
+    url(r'^mp3_convert_user/accountadminsignup/$', views.accountadminsignup, name='accountadminsignup'),
+    url(r'^mp3_convert_user/delete_account/$', views.delete_account, name='delete_account'),
+    url(r'^mp3_convert_user/getaccountlist/$', views.get_account_list, name='getaccountlist'),
+    url(r'^mp3_convert_user/change-password/$', views.change_password, name="change_password"),
+    url(r'^mp3_convert_user/user-info/$', views.user_info, name="user_info"),
+    url(r'^mp3_convert_user/change-email/$', views.change_email, name="change_email"),
+    url(r'^mp3_convert_user/password-reset/$', auth_views.password_reset, name='password_reset',
+        kwargs={'template_name': 'dl_mp3cvt/password_reset_form.html',
+                'email_template_name': 'dl_mp3cvt/password_reset_email.html',
+                'subject_template_name': 'dl_mp3cvt/password_reset_subject.txt', }),
+    url(r'^mp3_convert_user/password-reset/done/$', auth_views.password_reset_done, name='password_reset_done',
+        kwargs={'template_name': 'dl_mp3cvt/password_reset_done.html', }),
+    url(r'^mp3_convert_user/reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        auth_views.password_reset_confirm, name='password_reset_confirm',
+        kwargs={'template_name': 'dl_mp3cvt/password_reset_confirm.html', }),
+    url(r'^mp3_convert_user/reset/done/$', auth_views.password_reset_complete, name='password_reset_complete',
+        kwargs={'template_name': 'dl_mp3cvt/password_reset_complete.html', }),
+    url(r'^mp3_convert_user/down-user-info/$', views.down_user_info, name="down_user_info"),
+    url(r'^mp3_convert_user/insert-user-info/$', views.insert_user_info, name="insert_user_info"),
+    url(r'^mp3_convert_user/down-account-info/$', views.down_account_info, name="down_account_info"),
+    url(r'^mp3_convert_user/insert-account-info/$', views.insert_account_info, name="insert_account_info"),
+    url(r'^mp3_convert_user/account-change-access/$', views.account_change_access, name="account_change_access"),
+    url(r'^mp3_convert_user/user-change-access/$', views.user_change_access, name="user_change_access"),
+]
